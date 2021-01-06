@@ -1,0 +1,63 @@
+version: '3'
+services:
+  web:
+    image: banpu/banpu-web:latest
+    volumes:
+      - assets:/banpu/dist
+    environment:
+      TZ: $TIME_ZONE
+      LANG: $LANG
+    # networks:
+    #   - banpu
+    tty: true
+    stdin_open: true
+  nginx:
+    image: banpu/banpu-nginx:latest
+    # depends_on:
+    #   - web
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - assets:$SYS_NGINX_ROOT_PATH
+      - $NGINX_CONF_PATH/nginx.conf:$SYS_NGINX_CONF_PATH/nginx.conf
+      - $NGINX_CONFD_PATH/default.conf:$SYS_NGINX_CONFD_PATH/default.conf
+      - $NGINX_SSL_CERTIFICATE_PATH:$SYS_NGINX_SSL_CERTIFICATE_PATH
+    environment:
+      TZ: $TIME_ZONE
+      LANG: $LANG
+    # networks:
+    #   - banpu
+    tty: true
+    stdin_open: true
+    privileged: true
+  varnish:
+    image: banpu/banpu-varnish:latest
+    # depends_on:
+    #   - web
+    #   - nginx
+    ports:
+      - '8080:8080'
+    volumes:
+      - $VARNISH_VCL_PATH/default.vcl:$SYS_VARNISH_VCL_PATH/default.vcl
+    environment:
+      TZ: $TIME_ZONE
+      LANG: $LANG
+    # networks:
+    #   - banpu
+    tty: true
+    stdin_open: true
+
+# networks:
+#   web:
+#     driver: bridge
+#   default:
+#     external:
+#       name: bridge
+
+#   banpu:
+#     driver: bridge
+
+volumes:
+  assets:
+    driver: local
