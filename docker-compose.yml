@@ -7,14 +7,12 @@ services:
     environment:
       TZ: $TIME_ZONE
       LANG: $LANG
-    # networks:
-    #   - banpu
+    networks:
+      - banpu
     tty: true
     stdin_open: true
   nginx:
     image: banpu/banpu-nginx:latest
-    # depends_on:
-    #   - web
     ports:
       - '80:80'
       - '443:443'
@@ -26,16 +24,13 @@ services:
     environment:
       TZ: $TIME_ZONE
       LANG: $LANG
-    # networks:
-    #   - banpu
+    networks:
+      - banpu
     tty: true
     stdin_open: true
     privileged: true
   varnish:
     image: banpu/banpu-varnish:latest
-    # depends_on:
-    #   - web
-    #   - nginx
     ports:
       - '8080:8080'
     volumes:
@@ -43,20 +38,18 @@ services:
     environment:
       TZ: $TIME_ZONE
       LANG: $LANG
-    # networks:
-    #   - banpu
+    networks:
+      - banpu
     tty: true
     stdin_open: true
 
-# networks:
-#   web:
-#     driver: bridge
-#   default:
-#     external:
-#       name: bridge
+networks:
+  default:
+    external:
+      name: bridge
 
-#   banpu:
-#     driver: bridge
+  banpu:
+    driver: bridge
 
 volumes:
   assets:
